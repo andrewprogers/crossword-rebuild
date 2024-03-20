@@ -1,0 +1,93 @@
+
+  .top {
+    background-color: #EEE;
+    overflow: hidden;
+    border-bottom: 5px solid #FFD658;
+    border-top: 2px solid #B2B2B2;
+    margin-bottom: 0px;
+  }
+
+  .top a {
+    text-decoration: none;
+  }
+  
+  .top a, .top span {
+    font-size: 1.5em;
+    color: #444;
+    display: block;
+    padding: 14px 10px;
+  }
+  
+  .avatar, #user-name {
+    display: none;
+  }
+  
+  .top a, .top span, .avatar {
+    float: left;
+  }
+  
+  .top a#title {
+    font-size: 1.8em;
+    padding: 10px 20px 7px 10px;
+  }
+  
+  #title:hover {
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+  }
+  
+  .nav-link {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
+    min-width: 90px;
+    text-align: center;
+  }
+  
+  .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #444;
+  }
+  
+  .top a.sign-in {
+    background-color: #CF4332;
+    color: white;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  
+  .top a.sign-in:hover {
+    background-color: #E8604F;
+    color: white;
+  }
+
+  
+  /* Small only */
+  @media screen and (max-width: 39.9375em) {
+    .top-right a, .top-right span, .avatar {
+      float: left;
+    }
+  
+    .top-right {
+      width: 100%;
+    }
+  }
+  
+  /* Medium and up */
+  @media screen and (min-width: 40em) {
+    .top a.sign-in {
+      width: auto;
+    }
+  }
+  
+  /* Large and up */
+  @media screen and (min-width: 64em) {
+    .avatar {
+      padding: 6px;
+    }
+  
+    .top-right {
+       float: right
+    }
+  }
+  
