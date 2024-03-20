@@ -1,5 +1,6 @@
 import {createBrowserRouter, Route, Link} from 'react-router-dom'
 import App from './App'
+import LandingPage from './components/LandingPage/LandingPage'
 
 const router= createBrowserRouter([
     {
@@ -10,9 +11,7 @@ const router= createBrowserRouter([
       children: [
         {
             path: "/",
-            element: (
-                <h1>This is the title page</h1>
-            )
+            element: <LandingPage />
         },
         {
             path: "/puzzles",
