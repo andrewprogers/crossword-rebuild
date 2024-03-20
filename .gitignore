@@ -1,5 +1,7 @@
 notes.md
 misc/
-instance/*
+instance/config_dev.py
+instance/config_prod.py
+instance/config_staging.py
 db/neon_creds.txt
 **/__pycache__
