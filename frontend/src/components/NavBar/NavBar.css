@@ -83,7 +83,12 @@
   /* Large and up */
   @media screen and (min-width: 64em) {
     .avatar {
-      padding: 6px;
+      padding: 1px;
+      max-height: 55px;
+    }
+
+    .avatar, #user-name {
+      display: inherit;
     }
   
     .top-right {
