@@ -1,0 +1,5 @@
+notes.txt
+misc/
+instance/*
+db/neon_creds.txt
+**/__pycache__
