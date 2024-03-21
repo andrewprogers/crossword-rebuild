@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, g, session
-# from .database import init_db, get_db_session
+from .database import init_db, get_db_session
 # from .database.models import TodoList, TodoListEncoder
 # from sqlalchemy import select
 # from api.blueprints import todo_list
@@ -27,7 +27,7 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
-    # db_session = init_db(app)
+    db_session = init_db(app)
     init_auth(app)
 
     @app.route("/") # dummy route for use with url_for
@@ -44,8 +44,8 @@ def create_app(test_config=None):
                 # users session has expired, so log them out here as well
                 session.clear()
 
-        ## set db variable for request
-        # g.db = db_session
+        # set db variable for request
+        g.db = db_session
     
     @app.teardown_request
     def teardown_db_session(err = None):

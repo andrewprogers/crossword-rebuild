@@ -2,6 +2,9 @@ from urllib.parse import quote_plus, urlencode
 from flask import Flask, Blueprint, redirect, session, url_for
 from authlib.integrations.flask_client import OAuth
 
+from ..database import get_db_session
+from ..database.user import User
+from sqlalchemy import select
 
 
 def init_auth(app: Flask):
@@ -37,6 +40,13 @@ def init_auth(app: Flask):
     def callback():
         token = oauth.auth0.authorize_access_token()
         session["user"] = token
+
+        with get_db_session() as db_session:
+            user = db_session.get(User, token["userinfo"]["sub"])
+            if not user:
+                db_session.add(User.from_user_session(token))
+                db_session.commit()
+
         return redirect("/")
     
     @auth_bp.route("/logout", methods=["GET"])

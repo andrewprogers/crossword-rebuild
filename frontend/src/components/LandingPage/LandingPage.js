@@ -7,15 +7,15 @@ import './LandingPage.css'
 export default () => {
     return(
         <>
-            <div class="main-image">
+            <div className="main-image">
                 <img src={grid} />
-                <div class="try-now">
+                <div className="try-now">
                     <a href="/puzzles/random" >Play Now</a>
                 </div>
             </div>
 
-            <div class="lower columns">
-                <div class="small-12 small-centered columns">
+            <div className="lower columns">
+                <div className="small-12 small-centered columns">
                     <h3>Welcome to Cross Reaction!</h3>
                     <p>
                     Cross Reaction is a modern browser-based interface for solving and creating crossword puzzles. The puzzles found here are community contributed. Tools are available to help first-time constructors and pros alike build puzzles to share.
