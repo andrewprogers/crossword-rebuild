@@ -7,6 +7,7 @@ from sqlalchemy import String, TIMESTAMP, func, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
 from .base import Base
 from .user import User
+from .answer import Answer
 
 @dataclass
 class Puzzle(Base):
