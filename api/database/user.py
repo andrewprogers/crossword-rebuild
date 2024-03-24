@@ -5,24 +5,23 @@ from dataclasses import dataclass
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, TIMESTAMP, func
 from .base import Base
-from .puzzle import Puzzle
 
 @dataclass
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[String] = mapped_column(String(50), nullable=False, primary_key=True)
-    email: Mapped[String] = mapped_column(String, nullable=False)
-    given_name: Mapped[String] = mapped_column(String)
-    family_name: Mapped[String] = mapped_column(String)
-    picture_url: Mapped[String] = mapped_column(String)
+    id: Mapped[str] = mapped_column(String(50), nullable=False, primary_key=True)
+    email: Mapped[str] = mapped_column(String, nullable=False)
+    given_name: Mapped[str] = mapped_column()
+    family_name: Mapped[str] = mapped_column()
+    picture_url: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.utc_timestamp())
 
     puzzles: Mapped[List["Puzzle"]] = relationship(back_populates="user")
 
     def __repr__(self) -> str:
-        return f"User(id={self.id!r}, name='{self.family_name} {self.given_name}', created={self.created_at.isoformat()})"
+        return f"User(id={self.id!r}, name='{self.given_name} {self.family_name}')"
     
     @classmethod
     def from_user_session(cls, user_session):
