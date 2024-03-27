@@ -4,7 +4,7 @@ from flask import Flask, g, session
 from .database import init_db, get_db_session
 # from .database.models import TodoList, TodoListEncoder
 # from sqlalchemy import select
-# from api.blueprints import todo_list
+from api.blueprints import puzzle
 from api.blueprints.auth import init_auth
 import datetime as dt
 
@@ -52,6 +52,6 @@ def create_app(test_config=None):
         if "db" in g:
             g.db.remove()
 
-    # app.register_blueprint(todo_list.bp)
+    app.register_blueprint(puzzle.bp)
 
     return app

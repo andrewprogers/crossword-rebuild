@@ -35,3 +35,30 @@ class Puzzle(Base):
     def __repr__(self) -> str:
         return f"Puzzle(id={self.id!r}, title='{self.title!r}', size={self.num_rows}x{self.num_cols}, draft={self.draft!r})"
     
+    def get_clues(self):
+        if self.draft:
+            return self.draft_clues
+
+        clues = {
+            "across": [],
+            "down": []
+        }
+        for answer in sorted(self.answers, key=(lambda a: a.gridnum)):
+            if answer.is_across:
+                clues["across"].append(answer.clue)
+            else:
+                clues["down"].append(answer.clue)
+        return clues
+    
+    def to_dict(self):
+        return {
+            "clues": self.get_clues(),
+            "grid": self.grid["grid"],
+            "size": {
+                "rows": self.num_rows,
+                "cols": self.num_cols
+            },
+            "draft": self.draft,
+            "title": self.title
+        }
+    
