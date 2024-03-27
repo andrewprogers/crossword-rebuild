@@ -1,0 +1,26 @@
+
+#title-input {
+    width: 100%;
+    display: inline;
+    border: none;
+    border-bottom: 2px solid #FFD658;
+    background-color: inherit;
+    margin-left: 0px;
+    margin-bottom: 5px;
+    box-shadow: none;
+    font-size: 2em;
+    padding: 10px 0px;
+  }
+  
+  #title-input:focus {
+    color: transparent;
+    text-shadow: 0 0 0 black;
+  }
+  
+  input#title-input.editable::selection {
+    background: rgba(255, 214, 88, 0.7);
+  }
+  
+  #title-input.editable:focus {
+    color: black;
+  }

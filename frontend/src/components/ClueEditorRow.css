@@ -1,0 +1,17 @@
+.clue-editor-row input {
+    background-color: inherit;
+    width: 80%;
+    border: none;
+    padding-left: 2em;
+    margin-left: -1.7em;
+    font-family: 'Roboto Mono', courier, monospace;
+}
+
+.clue-editor-row input:focus {
+    outline: none;
+    border-bottom: 1px solid #FFD658;
+}
+
+.clue-editor-row input::selection {
+    background: rgba(255, 214, 88, 0.7);
+}

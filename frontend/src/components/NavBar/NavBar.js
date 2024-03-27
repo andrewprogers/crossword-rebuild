@@ -5,7 +5,6 @@ import { UserContext } from '../../context/UserContext';
 
 const NavBar = () => {
   const user = useContext(UserContext)
-  console.log(user)
 
   const navLinks = [
     { text: "Play", to:"/puzzles", requiresAuth: false },
