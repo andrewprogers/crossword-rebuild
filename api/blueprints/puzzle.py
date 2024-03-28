@@ -46,13 +46,13 @@ def show(puzzle_id: int):
                 solution = Solution(
                     user_id=current_user_id(), 
                     puzzle_id=puzzle.id,
-                    user_answers=[""]*(puzzle.num_cols * puzzle.num_rows)
+                    user_answers=puzzle.generate_blank_solution()
                     )
                 db_session.add(solution)
                 db_session.commit()
 
         response["solution"] = {
-            "solution_id": solution.id,
+            "id": solution.id,
             "user_id": solution.user_id,
             "user_answers": solution.user_answers,
             "is_solved": solution.correct

@@ -52,6 +52,7 @@ class Puzzle(Base):
     
     def to_dict(self):
         return {
+            "id": self.id,
             "clues": self.get_clues(),
             "grid": self.grid["grid"],
             "size": {
@@ -62,3 +63,8 @@ class Puzzle(Base):
             "title": self.title
         }
     
+    def generate_blank_solution(self):
+        grid = []
+        for _ in range(self.num_cols):
+            grid.append([""] * self.num_cols)
+        return grid

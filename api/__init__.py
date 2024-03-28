@@ -5,6 +5,7 @@ from .database import init_db, get_db_session
 # from .database.models import TodoList, TodoListEncoder
 # from sqlalchemy import select
 from api.blueprints import puzzle
+from api.blueprints import solution
 from api.blueprints.auth import init_auth
 import datetime as dt
 
@@ -44,6 +45,9 @@ def create_app(test_config=None):
             if dt.datetime.fromtimestamp(exp, dt.timezone.utc) <= dt.datetime.now(dt.timezone.utc):
                 # users session has expired, so log them out here as well
                 session.clear()
+            g.user_id = session.get("user")["userinfo"]["sub"]
+        else:
+            g.user_id = None
     
     @app.teardown_request
     def teardown_db_session(err = None):
@@ -51,5 +55,6 @@ def create_app(test_config=None):
             g.db.remove()
 
     app.register_blueprint(puzzle.bp)
+    app.register_blueprint(solution.bp)
 
     return app

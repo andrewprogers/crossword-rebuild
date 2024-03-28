@@ -13,14 +13,16 @@ const CrosswordGrid = ({
   const [containerWidth, setContainerWidth] = useState(0)
 
   useEffect(() => {
-    const handleResize = () => {
-      let width = gridContainer.current.getBoundingClientRect().width
-      setContainerWidth(width)
+    if (gridContainer.current !== null) {
+      const handleResize = () => {
+        let width = gridContainer.current.getBoundingClientRect().width
+        setContainerWidth(width)
+      }
+      handleResize()
+      window.addEventListener('resize', handleResize)
+      return () => { window.addEventListener('resize', handleResize) }
     }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => { window.addEventListener('resize', handleResize) }
-  }, [gridContainer])
+  }, [gridContainer.current])
 
   let selectedClue = crossword.getSelectedClue(clueDirection, selectedCellRow, selectedCellColumn)
   let cells = crossword.userLetters.map((row, rIndex) => {

@@ -20,7 +20,7 @@ class Solution(Base):
     correct: Mapped[bool] = mapped_column(nullable=False, default=False)
 
     created_at: Mapped[dt.datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
-    updated_at: Mapped[dt.datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.utc_timestamp())
+    updated_at: Mapped[dt.datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # relationships
     user: Mapped["User"] = relationship()

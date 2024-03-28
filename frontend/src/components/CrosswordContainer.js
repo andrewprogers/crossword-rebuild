@@ -62,63 +62,12 @@
 //     }
 //   }
 
-//   patchPayload() {
-//     let body;
-//     if (this.state.editMode) {
-//       let gridUpdate = Crossword.generateEmptyGrid(this.state.grid.length)
-//       for (var row = 0; row < this.state.grid.length; row++) {
-//         for (var col = 0; col < this.state.grid.length; col++) {
-//           if (this.state.grid[row][col] === ".") {
-//             gridUpdate[row][col] = '.'
-//           } else if (this.state.userLetters[row][col].match(/[A-Z]/)) {
-//             gridUpdate[row][col] = this.state.userLetters[row][col]
-//           } else {
-//             gridUpdate[row][col] = ' '
-//           }
-//         }
-//       }
-//       body = {
-//         grid_update: gridUpdate,
-//         title_update: this.state.puzzleTitle,
-//         clues_update: this.state.clues
-//       }
-//     } else {
-//       body = {
-//         user_solution: this.state.userLetters,
-//         is_solved: this.state.isSolved
-//       }
-//     }
-//     return {
-//       method: "PATCH",
-//       credentials: "same-origin",
-//       headers: {
-//         'Content-Type': 'application/json'
-//       },
-//       body: JSON.stringify(body)
-//     }
-//   }
 
-//   apiEndpoint(mode) {
-//     let puzzle_id = window.location.pathname.split('/')[2]
-//     if (mode === 'publish'){
-//       return `/api/v1/puzzles/${puzzle_id}/publish`
-//     }
-//     let solution_api = `/api/v1/users/${this.user_id}/solutions/${this.solution_id}`
-//     let puzzles_api = `/api/v1/puzzles/${puzzle_id}`
 
-//     return this.state.editMode ? puzzles_api : solution_api
-//   }
 
-//   componentDidUpdate() {
-//     let payload = this.patchPayload()
-//     if(this.user !== null && payload) {
-//       fetch(this.apiEndpoint(), payload)
-//       .then(response => response.json())
-//     }
-//   }
 
-//   }
-// }
+
+
 
 
 import React, { useState, useEffect, useRef } from "react";
@@ -129,7 +78,42 @@ import CluesContainer from "./CluesContainer";
 import UserActionController from "../modules/UserActionController";
 import PuzzleMenu from "../containers/PuzzleMenu"
 import Swal from 'sweetalert2'
+import {debounce} from '../modules/utilities'
 
+const debouncedPatch = debounce(async (endpoint, payload) => {
+  try {
+    const response = await fetch(endpoint, payload)
+    if (response.status == 401) {
+      let json = await response.json()
+      if ('redirect_url' in json) {
+        console.log("Unauthenticated, redirecting")
+        window.location = json.redirect_url
+      } else {
+        throw new Error("401 API response missing redirect_url")
+      }
+    } else if (!response.ok) {
+      throw new Error(`Unexpected response: ${response.statusText}`)
+    } else {
+      // happy path
+      let json = await response.json()
+      console.log("save result", json)
+    }
+  } catch (error) {
+    console.error("Unhandled error while attempting to save solution", error)
+  }
+
+  // fetch(endpoint, payload)
+  // .then(response => {
+  //   if (response.ok) {return response.json()}
+  //   else if (response.status == 401) {console.error("Unauthenticated")} 
+  //   else {throw Error(response.statusText)}
+  // }
+  // )
+  // .then(json => {
+  //   console.log("Saved result", json)
+  // })
+  // .catch(err => console.error("failed to patch data", err))
+}, 1000)
 
 
 const findInitialCell = (grid) => {
@@ -156,7 +140,7 @@ const CrosswordContainer = () => {
   let isDraftPuzzle = false;
 
   if (solution) {
-    initialSolution = Crossword.parseArrayToGrid(solution.user_answers);
+    initialSolution = solution.user_answers;
     solveStatus = solution.is_solved
   } else {
     initialSolution = Crossword.generateEmptyGrid(puzzle.size.rows);
@@ -182,11 +166,12 @@ const CrosswordContainer = () => {
   const [selectedCellColumn, setSelectedCellColumn] = useState(initialPosition.col)
   const [clueDirection, setClueDirection] = useState("across")
   const [isSolved, setIsSolved] = useState(solveStatus)
-  const [editMode, setEditMode] = useState(true)
+  const [editMode, setEditMode] = useState(puzzle.isDraftPuzzle)
   const [puzzleTitle, setPuzzleTitle] = useState(puzzle.title)
   const [puzzleRevealed, setPuzzleRevealed] = useState(false)
   // gridActive is false when editing another field b/c we need to not prevent input
   const [gridActive, setGridActive] = useState(true) 
+  const [puzzleEdited, setPuzzleEdited] = useState(false)
 
   const updateSelectedCell = (row, column) => {
     setSelectedCellRow(row)
@@ -212,13 +197,26 @@ const CrosswordContainer = () => {
 
 
   const handleStateUpdates = (newState) => {
-    if ("grid" in newState) { setGrid(newState.grid) }
-    if ("clues" in newState) { setClues(newState.clues) }
-    if ("userLetters" in newState) { setUserLetters(newState.userLetters) }
+    if ("grid" in newState) { 
+      setGrid(newState.grid) 
+      setPuzzleEdited(true)
+    }
+    if ("clues" in newState) { 
+      setClues(newState.clues)
+      setPuzzleEdited(true)
+    }
+    if ("userLetters" in newState) { 
+      setUserLetters(newState.userLetters) 
+      setPuzzleEdited(true)
+    }
     if ("selectedCellRow" in newState) { setSelectedCellRow(newState.selectedCellRow) }
     if ("selectedCellColumn" in newState) { setSelectedCellColumn(newState.selectedCellColumn) }
     if ("clueDirection" in newState) { setClueDirection(newState.clueDirection) }
-    if ("isSolved" in newState) { setIsSolved(newState.isSolved) }
+    if ("isSolved" in newState) { 
+      setIsSolved(newState.isSolved)
+      setPuzzleEdited(true)
+    }
+
   }
 
   const handleKeyDown = (event) => {
@@ -239,7 +237,6 @@ const CrosswordContainer = () => {
   useEffect(() => {
     if (gridActive) {
       const capture = (event) => {
-        console.log(event)
         if (isCrosswordKeyboardInput(event)) {
           event.preventDefault()
           handleKeyDown(event)
@@ -276,6 +273,60 @@ const CrosswordContainer = () => {
       handleStateUpdates(getUserActionController().clear())
     }
   }
+
+  // Functions for handling saving changes
+
+  const patchPayload = () => {
+    let body;
+    if (editMode) {
+      let gridUpdate = Crossword.generateEmptyGrid(grid.length)
+      for (var row = 0; row < grid.length; row++) {
+        for (var col = 0; col < grid.length; col++) {
+          if (grid[row][col] === ".") {
+            gridUpdate[row][col] = '.'
+          } else if (userLetters[row][col].match(/[A-Z]/)) {
+            gridUpdate[row][col] = userLetters[row][col]
+          } else {
+            gridUpdate[row][col] = ' '
+          }
+        }
+      }
+      body = {
+        grid_update: gridUpdate,
+        title_update: puzzleTitle,
+        clues_update: clues
+      }
+    } else {
+      body = {
+        user_solution: userLetters,
+        is_solved: isSolved
+      }
+    }
+    return {
+      method: "PATCH",
+      credentials: "same-origin",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    }
+  }
+
+  const apiEndpoint = (mode) => {
+    if (mode === 'publish'){
+      return `/api/v1/puzzles/${puzzle.id}/publish`
+    }
+    let solution_api = `/api/solution/${solution.id}`
+    let puzzles_api = `/api/puzzle/${puzzle.id}`
+
+    return editMode ? puzzles_api : solution_api
+  }
+
+  useEffect(() => {
+    if (!puzzleEdited) { return }
+    let payload = patchPayload()
+    if("solution" in puzzle || true) {
+      debouncedPatch(apiEndpoint(), payload)
+    }
+  }, [grid, userLetters, puzzleTitle, clues, isSolved, puzzleEdited])
 
   let crossword = new Crossword(grid, clues, userLetters);
   return (
