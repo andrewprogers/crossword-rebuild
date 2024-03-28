@@ -55,7 +55,7 @@ const CluesContainer = ({
   )
 
   return (
-    <div id='clues-container' style={{ marginTop: 5 }}>
+    <div id='clues-container'>
       {clueSets}
     </div>
   )

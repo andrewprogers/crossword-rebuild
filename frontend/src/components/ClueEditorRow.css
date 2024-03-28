@@ -5,6 +5,7 @@
     padding-left: 2em;
     margin-left: -1.7em;
     font-family: 'Roboto Mono', courier, monospace;
+    height: 100%;
 }
 
 .clue-editor-row input:focus {

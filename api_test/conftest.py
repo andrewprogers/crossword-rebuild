@@ -6,8 +6,10 @@ from sqlalchemy import create_engine, text
 from contextlib import contextmanager
 from uuid import uuid1
 
+from flask import g, session
+
 @contextmanager
-def test_database(server: str, db_prefix: str='test_', migrations_glob: str=None):
+def get_test_database(server: str, db_prefix: str='test_', migrations_glob: str=None):
     postgres = server + 'postgres'
     db_name = db_prefix + str(uuid1()).replace('-', '')
     with create_engine(postgres, echo=False).connect().execution_options(isolation_level='AUTOCOMMIT') as conn:
@@ -41,7 +43,6 @@ def test_database(server: str, db_prefix: str='test_', migrations_glob: str=None
         ''')
         conn.execute(stop_connections)
         conn.execute(text('drop database if exists "{db_name}";'))
-
             
 
 sys.path.append(abspath(join(dirname(__file__), "../")))
@@ -52,23 +53,34 @@ from api.database.user import User
 DATABASE_SERVER='postgresql+psycopg://postgres@localhost/'
 
 @pytest.fixture
-def app():
-    with test_database(DATABASE_SERVER, "xword_test_", migrations_glob='./database/migrations/*') as db_uri:
-        app = create_app({
+def test_config():
+    with get_test_database(DATABASE_SERVER, "xword_test_", migrations_glob='./database/migrations/*') as db_uri:
+        yield {
             'TESTING': True,
-            'DATABASE_URI': db_uri
-        })
-        with app.app_context():
-            with get_db_session() as db_session:
-                db_session.add(User(
-                    email="test@gmail.com",
-                    given_name="Test",
-                    family_name="User",
-                    picture_url=None
-                ))
-                db_session.commit()
+            'DATABASE_URI': db_uri,
+            'AUTH0_DOMAIN':"dev-g5pdnglxbyjtwidp.us.auth0.com",
+            'AUTH0_CLIENT_ID':"",
+            'AUTH0_CLIENT_SECRET':"",
+            'SECRET_KEY':'test'
 
-        yield app
+        }
+
+
+@pytest.fixture
+def app(test_config):
+    app = create_app(test_config)
+    with app.app_context():
+        with get_db_session() as db_session:
+            db_session.add(User(
+                id="fake|auth0id",
+                email="test@gmail.com",
+                given_name="Test",
+                family_name="User",
+                picture_url=None
+            ))
+            db_session.commit()
+
+    yield app
 
 @pytest.fixture
 def client(app):

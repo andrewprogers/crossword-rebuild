@@ -21,6 +21,7 @@ const ClueEditorRow = ({
         value={clueText}
         onFocus={() => setGridActive(false)}
         onBlur={() => setGridActive(true)}
+        onScroll={(e) => e.preventDefault()}
       ></input>
     </div>
   )

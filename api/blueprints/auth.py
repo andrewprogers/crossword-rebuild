@@ -27,7 +27,7 @@ def init_auth(app: Flask):
 
     @auth_bp.route("/login", methods=["GET"])
     def login():
-        if app.config["FLASK_ENV"] == "DEVELOPMENT":
+        if app.config.get("FLASK_ENV") == "DEVELOPMENT":
             callback_url = "https://localhost:3000" + url_for("auth.callback", _external=False)
         else:
             callback_url = url_for("auth.callback", _external=True)

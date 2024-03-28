@@ -26,8 +26,9 @@ def create_app(test_config=None):
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
+    
+    app.config["DB_SESSION"] = init_db(app)
 
-    db_session = init_db(app)
     init_auth(app)
 
     @app.route("/") # dummy route for use with url_for
@@ -43,9 +44,6 @@ def create_app(test_config=None):
             if dt.datetime.fromtimestamp(exp, dt.timezone.utc) <= dt.datetime.now(dt.timezone.utc):
                 # users session has expired, so log them out here as well
                 session.clear()
-
-        # set db variable for request
-        g.db = db_session
     
     @app.teardown_request
     def teardown_db_session(err = None):
