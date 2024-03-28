@@ -2,7 +2,7 @@ import {createBrowserRouter, Route, Link} from 'react-router-dom'
 import App from './App'
 import LandingPage from './components/LandingPage/LandingPage'
 import CrosswordContainer from './components/CrosswordContainer'
-import exampleData from './data/exampleCrossword'
+import NewPuzzle, {action as createPuzzle} from './components/NewPuzzle'
 
 const router= createBrowserRouter([
     {
@@ -28,6 +28,11 @@ const router= createBrowserRouter([
                 console.error("Error retrieving puzzle data")
               }
             }
+        },
+        {
+          path: "/puzzles/new",
+          element: <NewPuzzle />,
+          action: createPuzzle
         }
       ]
     },

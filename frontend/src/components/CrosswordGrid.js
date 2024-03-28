@@ -20,7 +20,7 @@ const CrosswordGrid = ({
       }
       handleResize()
       window.addEventListener('resize', handleResize)
-      return () => { window.addEventListener('resize', handleResize) }
+      return () => { window.removeEventListener('resize', handleResize) }
     }
   }, [gridContainer.current])
 

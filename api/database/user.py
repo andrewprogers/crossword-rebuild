@@ -16,7 +16,7 @@ class User(Base):
     family_name: Mapped[str] = mapped_column()
     picture_url: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.utc_timestamp())
+    updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     puzzles: Mapped[List["Puzzle"]] = relationship(back_populates="user")
 

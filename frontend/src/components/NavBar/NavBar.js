@@ -18,7 +18,7 @@ const NavBar = () => {
     authFragment = <>
       <Link to="/auth/logout" className="nav-link" reloadDocument={true}>Sign Out</Link>
       <span id="user-name">{`${user.given_name} ${user.family_name}`}</span>
-      <img src={user.picture} className="avatar" />
+      <img src={user.picture} className="avatar" referrerPolicy="no-referrer"/>
     </>
   }
   return(

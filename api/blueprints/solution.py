@@ -25,10 +25,7 @@ def patch_solution(solution_id: int):
             return {"errors": ["Bad request", f"Request missing key: {err}"], "status": 400}, 400
         
         # validate solution
-        if not (
-            len(new_user_solution) == solution.puzzle.num_rows
-            and all(map(lambda r: len(r) == solution.puzzle.num_cols, new_user_solution))
-        ):
+        if not solution.puzzle.valid_grid_size(new_user_solution):
             return  {"errors": ["Solution length invalid"], "status": 400}, 400
 
         solution.user_answers = new_user_solution

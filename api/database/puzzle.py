@@ -9,6 +9,7 @@ from .base import Base
 from .user import User
 from .answer import Answer
 
+
 @dataclass
 class Puzzle(Base):
     __tablename__ = "puzzles"
@@ -26,7 +27,7 @@ class Puzzle(Base):
     draft_clues = mapped_column(JSONB)
 
     created_at: Mapped[dt.datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
-    updated_at: Mapped[dt.datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.utc_timestamp())
+    updated_at: Mapped[dt.datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # relationships
     user: Mapped["User"] = relationship(back_populates="puzzles")
@@ -68,3 +69,25 @@ class Puzzle(Base):
         for _ in range(self.num_cols):
             grid.append([""] * self.num_cols)
         return grid
+    
+    def valid_grid_size(self, grid) -> bool:
+        return (
+            len(grid) == self.num_rows
+            and all(map(lambda r: len(r) == self.num_cols, grid))
+        )
+    
+    @classmethod
+    def new_draft(cls, user_id: str, title: str, size: int):
+        return cls(
+            user_id=user_id,
+            title=title,
+            num_rows=size,
+            num_cols=size,
+            grid={ "grid": [""]*(size*size) },
+            date=dt.datetime.now().date(),
+            draft=True,
+            draft_clues = {
+                "across": [""],
+                "down": [""]
+            }
+        )

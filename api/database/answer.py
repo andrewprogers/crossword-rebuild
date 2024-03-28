@@ -18,7 +18,7 @@ class Answer(Base):
     clue: Mapped[str] = mapped_column(String, nullable=False)
     answer: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[dt.datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
-    updated_at: Mapped[dt.datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.utc_timestamp())
+    updated_at: Mapped[dt.datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
 
     # relationships
     puzzle: Mapped["Puzzle"] = relationship(back_populates="answers")

@@ -101,18 +101,6 @@ const debouncedPatch = debounce(async (endpoint, payload) => {
   } catch (error) {
     console.error("Unhandled error while attempting to save solution", error)
   }
-
-  // fetch(endpoint, payload)
-  // .then(response => {
-  //   if (response.ok) {return response.json()}
-  //   else if (response.status == 401) {console.error("Unauthenticated")} 
-  //   else {throw Error(response.statusText)}
-  // }
-  // )
-  // .then(json => {
-  //   console.log("Saved result", json)
-  // })
-  // .catch(err => console.error("failed to patch data", err))
 }, 1000)
 
 
@@ -134,10 +122,9 @@ const CrosswordContainer = () => {
   const {puzzle, solution} = useLoaderData()
 
   // Derive initial state from loaded puzzle
-  const initialGrid = Crossword.parseArrayToGrid(puzzle.grid);
+  const initialGrid = puzzle.grid;
   let initialSolution;
   let solveStatus = false;
-  let isDraftPuzzle = false;
 
   if (solution) {
     initialSolution = solution.user_answers;
@@ -146,7 +133,7 @@ const CrosswordContainer = () => {
     initialSolution = Crossword.generateEmptyGrid(puzzle.size.rows);
   }
 
-  if (isDraftPuzzle) {
+  if (puzzle.draft) {
     initialSolution = Crossword.generateEmptyGrid(puzzle.size.rows);
     for (let row = 0; row < initialGrid.length; row++) {
       for (let col = 0; col < initialGrid.length; col++) {
@@ -166,7 +153,7 @@ const CrosswordContainer = () => {
   const [selectedCellColumn, setSelectedCellColumn] = useState(initialPosition.col)
   const [clueDirection, setClueDirection] = useState("across")
   const [isSolved, setIsSolved] = useState(solveStatus)
-  const [editMode, setEditMode] = useState(puzzle.isDraftPuzzle)
+  const [editMode, setEditMode] = useState(puzzle.draft)
   const [puzzleTitle, setPuzzleTitle] = useState(puzzle.title)
   const [puzzleRevealed, setPuzzleRevealed] = useState(false)
   // gridActive is false when editing another field b/c we need to not prevent input
@@ -314,10 +301,11 @@ const CrosswordContainer = () => {
     if (mode === 'publish'){
       return `/api/v1/puzzles/${puzzle.id}/publish`
     }
-    let solution_api = `/api/solution/${solution.id}`
-    let puzzles_api = `/api/puzzle/${puzzle.id}`
-
-    return editMode ? puzzles_api : solution_api
+    if (editMode) {
+      return `/api/puzzle/${puzzle.id}`
+    } else {
+      return `/api/solution/${solution.id}`
+    }
   }
 
   useEffect(() => {
