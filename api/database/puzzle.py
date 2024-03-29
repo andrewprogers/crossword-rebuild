@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import List
+from typing import List, Iterable
 from dataclasses import dataclass
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -65,11 +65,19 @@ class Puzzle(Base):
         }
     
     @staticmethod
-    def generate_blank_grid(rows: int, cols: int):
-        grid = []
-        for _ in range(cols):
-            grid.append([""] * rows)
-        return grid
+    def grid_from_iterable(iterable: Iterable, rows:int, cols:int) -> List[List]:
+        it = iter(iterable)
+        try:
+            grid = [[next(it) for _ in range (cols)] for _ in range(rows)]
+            if next(it, None) is None:
+                return grid
+            raise ValueError("Iterable length greater than rows*cols")
+        except StopIteration:
+            raise ValueError("Iterable length less than rows*cols")
+
+    @staticmethod
+    def generate_blank_grid(rows: int, cols: int) -> List[List[str]]:
+        return Puzzle.grid_from_iterable(('' for _ in range(rows*cols)), rows, cols)
     
     def generate_blank_solution(self):
         return Puzzle.generate_blank_grid(self.num_rows, self.num_cols)

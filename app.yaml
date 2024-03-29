@@ -1,0 +1,20 @@
+runtime: python310
+
+entrypoint: export FLASK_ENV=PRODUCTION; gunicorn -b :$PORT -w 2 'api:create_app()'
+
+handlers:
+# anything prefixed with api or auth gets sent to the flask app
+- url: /api/.*
+  script: auto
+
+- url: /auth/.*
+  script: auto
+
+# serves index page from react app build
+- url: /
+  static_files: build/index.html
+  upload: build/index.html
+
+# everything else served from the files built from the react app
+- url: /*
+  static_dir: build
