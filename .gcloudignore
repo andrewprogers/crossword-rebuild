@@ -21,3 +21,6 @@ __pycache__/
 
 misc/
 frontend/
+
+# note must have / in front or will not upload api/database
+/database/

@@ -1,15 +1,16 @@
 import React from "react";
 import { useLoaderData } from "react-router-dom";
 import './PuzzleIndex.css'
+import {Link} from 'react-router-dom'
 
 const PuzzleTile = ({ puzzle }) => {
     return (
-        <a href={puzzle.url}>
+        <Link to={puzzle.url}>
             <div className="puzzle-tile">
                 {puzzle.title}<br />
                 <span className='author-name'>{puzzle.user_name}</span>
             </div>
-        </a>
+        </Link>
     )
 }
 

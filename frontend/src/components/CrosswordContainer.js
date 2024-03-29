@@ -63,14 +63,7 @@
 //   }
 
 
-
-
-
-
-
-
-
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useLoaderData } from "react-router-dom"
 import Crossword from '../modules/Crossword'
 import CrosswordGrid from './CrosswordGrid';
@@ -78,12 +71,12 @@ import CluesContainer from "./CluesContainer";
 import UserActionController from "../modules/UserActionController";
 import PuzzleMenu from "../containers/PuzzleMenu"
 import Swal from 'sweetalert2'
-import {debounce} from '../modules/utilities'
+import {debounce, grid_iter} from '../modules/utilities'
 
 const debouncedPatch = debounce(async (endpoint, payload) => {
   try {
     const response = await fetch(endpoint, payload)
-    if (response.status == 401) {
+    if (response.status === 401) {
       let json = await response.json()
       if ('redirect_url' in json) {
         console.log("Unauthenticated, redirecting")
@@ -95,25 +88,15 @@ const debouncedPatch = debounce(async (endpoint, payload) => {
       throw new Error(`Unexpected response: ${response.statusText}`)
     } else {
       // happy path
-      let json = await response.json()
     }
   } catch (error) {
     console.error("Unhandled error while attempting to save solution", error)
   }
 }, 1000)
 
-
 const findInitialCell = (grid) => {
-  for (let r = 0; r < grid.length; r++) {
-    let row = grid[r]
-    for (let c = 0; c < row.length; c++) {
-      if (row[c] !== ".") {
-        return {
-          row: r,
-          col: c
-        }
-      }
-    }
+  for (let {r, c, el} of grid_iter(grid)) {
+    if (el !== '.') return { row: r, col: c }
   }
 }
 
@@ -134,11 +117,9 @@ const CrosswordContainer = () => {
 
   if (puzzle.draft) {
     initialSolution = Crossword.generateEmptyGrid(puzzle.size.rows);
-    for (let row = 0; row < initialGrid.length; row++) {
-      for (let col = 0; col < initialGrid.length; col++) {
-        if (initialGrid[row][col] !== '.') {
-          initialSolution[row][col] = initialGrid[row][col];
-        }
+    for (let {r, c, el} of grid_iter(initialGrid)) {
+      if (el !== '.') {
+        initialSolution[r][c] = initialGrid[r][c];
       }
     }
   }
@@ -152,7 +133,7 @@ const CrosswordContainer = () => {
   const [selectedCellColumn, setSelectedCellColumn] = useState(initialPosition.col)
   const [clueDirection, setClueDirection] = useState("across")
   const [isSolved, setIsSolved] = useState(solveStatus)
-  const [editMode, setEditMode] = useState(puzzle.draft)
+  const editMode = useState(puzzle.draft)[0]
   const [puzzleTitle, setPuzzleTitle] = useState(puzzle.title)
   const [puzzleRevealed, setPuzzleRevealed] = useState(false)
   // gridActive is false when editing another field b/c we need to not prevent input
@@ -170,7 +151,7 @@ const CrosswordContainer = () => {
     setClueDirection(newDir)
   }
 
-  const getUserActionController = () => new UserActionController({
+  const controller = new UserActionController({
     grid,
     clues,
     userLetters,
@@ -205,11 +186,6 @@ const CrosswordContainer = () => {
 
   }
 
-  const handleKeyDown = (event) => {
-    let newState = (getUserActionController()).keyPress(event.key, event.shiftKey)
-    handleStateUpdates(newState)
-  }
-
   const isCrosswordKeyboardInput = (e) => {
     if (e.altKey || e.ctrlKey || e.metaKey) return false; // so as not to block keyboard commands
     
@@ -225,16 +201,16 @@ const CrosswordContainer = () => {
       const capture = (event) => {
         if (isCrosswordKeyboardInput(event)) {
           event.preventDefault()
-          handleKeyDown(event)
+          let newState = controller.keyPress(event.key, event.shiftKey)
+          handleStateUpdates(newState)
         }
       }
       window.addEventListener('keydown', capture)
       return () => {window.removeEventListener('keydown', capture)}
     }
-  }, [gridActive, handleKeyDown])
+  }, [gridActive, controller])
 
   const handleMouseClick = (clickedCell, toggleBlack) => {
-    let controller = getUserActionController()
     handleStateUpdates(controller.mouseClick(clickedCell, toggleBlack))
     setGridActive(true)
   }
@@ -256,7 +232,7 @@ const CrosswordContainer = () => {
       showCancelButton: true
     })
     if (result.isConfirmed) {
-      handleStateUpdates(getUserActionController().clear())
+      handleStateUpdates(controller.clear())
     }
   }
 
@@ -310,7 +286,7 @@ const CrosswordContainer = () => {
   useEffect(() => {
     if (!puzzleEdited) { return }
     let payload = patchPayload()
-    if("solution" in puzzle || true) {
+    if(solution) {
       debouncedPatch(apiEndpoint(), payload)
     }
   }, [grid, userLetters, puzzleTitle, clues, isSolved, puzzleEdited])

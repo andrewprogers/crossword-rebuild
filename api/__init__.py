@@ -1,11 +1,20 @@
 import os
+import sys
+
+print('--------------')
+print("Current directory:", os.getcwd())
+print("sys.path")
+for path in sys.path:
+    print ('\t', path)
+print("__FILE__", os.path.dirname(os.path.realpath(__file__)))
 
 from flask import Flask, g, session
-from .database import init_db
 from api.blueprints import puzzle
 from api.blueprints import solution
 from api.blueprints.auth import init_auth, auth_bp, user_bp
 import datetime as dt
+from api.database import init_db
+
 
 def create_app(test_config=None):
     # create and configure the app

@@ -1,6 +1,6 @@
 runtime: python310
 
-entrypoint: export FLASK_ENV=PRODUCTION; gunicorn -b :$PORT -w 2 'api:create_app()'
+entrypoint: export FLASK_ENV=PRODUCTION; gunicorn -b :$PORT -w 1 'api:create_app()'
 
 handlers:
 # anything prefixed with api or auth gets sent to the flask app
@@ -10,11 +10,21 @@ handlers:
 - url: /auth/.*
   script: auto
 
-# serves index page from react app build
-- url: /
+# specifc files not in the /static folder:
+- url: /favicon.ico
+  static_files: build/squares.png
+  upload: build/squares.png
+
+- url: /robots.txt
+  static_files: build/robots.txt
+  upload: build/robots.txt
+
+# everything static served from the files built from the react app
+- url: /static/*
+  static_dir: build/static
+
+# serves index page from react app build for all other routes to be handled by client side
+- url: /.*
   static_files: build/index.html
   upload: build/index.html
 
-# everything else served from the files built from the react app
-- url: /*
-  static_dir: build

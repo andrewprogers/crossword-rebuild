@@ -80,7 +80,6 @@ def random():
             .order_by(func.random()).limit(1)
         )
         rand_puzzle_id = db_session.scalar(query)
-        print(rand_puzzle_id)   
     return redirect(url_for('puzzle.show', puzzle_id=rand_puzzle_id))
 
 @bp.route("/<int:puzzle_id>", methods=["GET"])

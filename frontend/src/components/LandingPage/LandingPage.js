@@ -1,16 +1,17 @@
 import grid from './grid.png'
 import github_mark from './github_mark.png'
 import linked_in_mark from './linked_in_mark.png'
+import {Link} from 'react-router-dom'
 
 import './LandingPage.css'
 
-export default () => {
+const LandingPage = () => {
     return(
         <>
             <div className="main-image">
-                <img src={grid} />
+                <img src={grid} alt="crossword grid decorative background"/>
                 <div className="try-now">
-                    <a href="/puzzles/random" >Play Now</a>
+                    <Link to="/puzzles/random" >Play Now</Link>
                 </div>
             </div>
 
@@ -26,10 +27,10 @@ export default () => {
                     This app was built by Andrew Rogers while at Launch Academy.
                     </p>
                     <a href="https://github.com/andrewprogers/crossword-react-on-rails">
-                    <img src={github_mark} />
+                    <img src={github_mark} alt="Github Icon"/>
                     </a>
                     <a href="https://www.linkedin.com/in/andrew-paul-rogers/">
-                    <img src={linked_in_mark} />
+                    <img src={linked_in_mark} alt="Linked-In Icon"/>
                     </a>
 
                 </div>
@@ -37,3 +38,5 @@ export default () => {
         </>
     )
 }
+
+export default LandingPage;

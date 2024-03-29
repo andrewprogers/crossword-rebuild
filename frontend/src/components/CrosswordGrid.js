@@ -22,7 +22,7 @@ const CrosswordGrid = ({
       window.addEventListener('resize', handleResize)
       return () => { window.removeEventListener('resize', handleResize) }
     }
-  }, [gridContainer.current])
+  })
 
   let selectedClue = crossword.getSelectedClue(clueDirection, selectedCellRow, selectedCellColumn)
   let cells = crossword.userLetters.map((row, rIndex) => {

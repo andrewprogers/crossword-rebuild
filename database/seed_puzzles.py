@@ -23,6 +23,9 @@ def sample_crosswords(num = 10):
 
     def contains_rebus(xword_json):
         return(any(map(lambda g: len(g) > 1, xword_json["grid"])))
+    
+    def has_theme_title(xword_json):
+        return 'NY TIMES' not in xword_json["title"]
 
     file_paths = glob.glob("./database/seed_data/**/*.json", recursive=True)
     random.shuffle(file_paths)
@@ -32,7 +35,7 @@ def sample_crosswords(num = 10):
         try:
             with open(path, 'r') as file:
                 data = json.load(file)
-                if is_square(data) and not contains_rebus(data):
+                if is_square(data) and has_theme_title(data) and not contains_rebus(data):
                     crosswords.append(data)
                     if len(crosswords) == num:
                         break
@@ -57,10 +60,10 @@ def answers_from_json(data):
 def puzzle_from_json(data):
     p = Puzzle(
         user_id=None,
-        title=data["title"],
+        title=data["title"] + " (NYT)",
         num_rows=data["size"]["rows"],
         num_cols=data["size"]["cols"],
-        grid = {"grid": data["grid"]},
+        grid = {"grid": Puzzle.grid_from_iterable(data["grid"], data["size"]["rows"], data["size"]["cols"])},
         date=dt.datetime.strptime(data["date"], "%m/%d/%Y").date(),
         notes=(data["jnotes"] or data["notepad"]),
         draft=False

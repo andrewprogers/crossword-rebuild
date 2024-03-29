@@ -1,5 +1,4 @@
 import Clue from './Clue'
-const EMPTY_CELL = ' ';
 
 class Crossword {
   constructor(gridArray, clues, userLetters) {
@@ -106,8 +105,8 @@ class Crossword {
     return clues.find((clue) => selectedClue.match(clue))
   }
 
-  getUserPattern(direction, row, column){
-    let clue = this.getSelectedClue(direction, row, column);
+  getUserPattern(direction, clue_row, clue_column){
+    let clue = this.getSelectedClue(direction, clue_row, clue_column);
     let pattern = ""
     for (var row = clue.row.start; row <= clue.row.end; row++) {
       for (var col = clue.column.start; col <= clue.column.end; col++) {
@@ -229,8 +228,6 @@ class Crossword {
 
   nextEmptyCellWithinClue(clue, row, col) {
     let nextCell = this.nextCellWithinClue(clue, row, col);
-    let currentRow = nextCell.row;
-    let currentCol = nextCell.column;
 
     while(true) {
       if (this.userLetters[nextCell.row][nextCell.column] === ' ') {
@@ -243,7 +240,6 @@ class Crossword {
       }
       nextCell = this.nextCellWithinClue(clue, nextCell.row, nextCell.column);
     }
-    return false;
   }
 
   hasEmptyCells() {

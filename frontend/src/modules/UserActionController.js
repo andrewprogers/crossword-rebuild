@@ -99,7 +99,7 @@ class UserActionController {
     newState.grid[row][col] = (this.state.grid[row][col] === '.') ? ' ' : '.';
     newState.grid[maxIndex - row][maxIndex - col] = newState.grid[row][col]
 
-    if ((row === this.state.selectedCellRow) && (col === this.state.selectedCellColumn) || (
+    if (((row === this.state.selectedCellRow) && (col === this.state.selectedCellColumn)) || (
         (maxIndex - row === this.state.selectedCellRow) && (maxIndex - col === this.state.selectedCellColumn))) {
       let crossword = new Crossword(newState.grid, this.state.clues, this.state.userLetters)
       let next = crossword.nextCell('right', this.state.selectedCellRow, this.state.selectedCellColumn)
