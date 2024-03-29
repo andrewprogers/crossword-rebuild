@@ -4,7 +4,6 @@ import './NewPuzzle.css'
 
 const NewPuzzle = () => {
     const data = useActionData()
-    console.log(data)
     const title = data?.title || ""
     const titleError = data?.titleError
     const size = data?.size || 10
@@ -64,7 +63,6 @@ const createPuzzle = async (title, size) => {
 
     const response = await fetch('/api/puzzle/create', payload)
     let json = await response.json()
-    console.log('json', json)
     return {
         created: true,
         puzzleId: json.puzzle_id
@@ -78,7 +76,6 @@ export const action = async ({ request, params }) => {
     if (!result.created) {
         return result.formData
     } else {
-        console.log('result', result)
         return redirect(`/puzzles/${result.puzzleId}`);
     }
 }

@@ -9,7 +9,7 @@ const NavBar = () => {
   const navLinks = [
     { text: "Play", to:"/puzzles", requiresAuth: false },
     { text: "Create", to:`/puzzles/new`, requiresAuth: true },
-    { text: "My Puzzles", to:`/puzzles/user/${user.user_id}`, requiresAuth: true }
+    { text: "My Puzzles", to:`/puzzles/user`, requiresAuth: true }
   ].filter(l => !l.requiresAuth || user.logged_in )
   .map(l => <Link to={l.to} key={l.to} className="nav-link">{l.text}</Link>)
 

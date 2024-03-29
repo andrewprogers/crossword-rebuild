@@ -1,14 +1,54 @@
-from flask import Blueprint, session, g, request
+from flask import Blueprint, session, g, request, redirect, url_for
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+from sqlalchemy.sql.expression import func 
 from ..database import get_db_session
 from ..database.puzzle import Puzzle
+from ..database.user import User
 from ..database.solution import Solution
 from api.decorators import login_required
 from datetime import datetime as dt
 
-
 bp = Blueprint("puzzle", __name__, url_prefix='/api/puzzle/')
+
+def map_puzzle(res):
+    return {
+        "id": res.id,
+        "url": f"/puzzles/{res.id}",
+        "title": res.title,
+        "user_name": f"{res.given_name} {res.family_name}"
+    }
+
+index_base = (
+    select(Puzzle.id, Puzzle.title, User.given_name, User.family_name)
+    .limit(20).order_by(Puzzle.updated_at.desc())
+)
+
+@bp.route('/', methods=["GET"])
+def index():
+    with get_db_session() as db_session:
+        results = db_session.execute(index_base.where(Puzzle.draft==False)).fetchall()
+    return {
+        "recent": [map_puzzle(res) for res in results]
+    }
+    
+@bp.route('/user', methods=["GET"])
+@login_required
+def user_index():
+    with get_db_session() as db_session:
+        created = db_session.execute(index_base.where(Puzzle.user_id==g.user_id, Puzzle.draft==False)).fetchall()
+        draft = db_session.execute(index_base.where(Puzzle.user_id==g.user_id, Puzzle.draft==True)).fetchall()
+        in_progress = db_session.execute(
+            index_base.where(Solution.user_id==g.user_id, Solution.correct==False)
+            .order_by(None).order_by(Solution.updated_at.desc())
+        )
+    return {
+        "user_id": g.user_id,
+        "created": list(map(map_puzzle, created)),
+        "draft": list(map(map_puzzle, draft)),
+        "in_progress": list(map(map_puzzle, in_progress))
+    }
+            
 
 @bp.route('/create', methods=["POST"])
 @login_required
@@ -31,6 +71,17 @@ def create_puzzle():
     return {
         "puzzle_id": puzzle.id
     }
+
+@bp.route("/random", methods=["GET"])
+def random():
+    with get_db_session() as db_session:
+        query = (
+            select(Puzzle.id).where(Puzzle.draft==False)
+            .order_by(func.random()).limit(1)
+        )
+        rand_puzzle_id = db_session.scalar(query)
+        print(rand_puzzle_id)   
+    return redirect(url_for('puzzle.show', puzzle_id=rand_puzzle_id))
 
 @bp.route("/<int:puzzle_id>", methods=["GET"])
 def show(puzzle_id: int):

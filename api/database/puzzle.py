@@ -64,11 +64,15 @@ class Puzzle(Base):
             "title": self.title
         }
     
-    def generate_blank_solution(self):
+    @staticmethod
+    def generate_blank_grid(rows: int, cols: int):
         grid = []
-        for _ in range(self.num_cols):
-            grid.append([""] * self.num_cols)
+        for _ in range(cols):
+            grid.append([""] * rows)
         return grid
+    
+    def generate_blank_solution(self):
+        return Puzzle.generate_blank_grid(self.num_rows, self.num_cols)
     
     def valid_grid_size(self, grid) -> bool:
         return (
@@ -83,7 +87,7 @@ class Puzzle(Base):
             title=title,
             num_rows=size,
             num_cols=size,
-            grid={ "grid": [""]*(size*size) },
+            grid={ "grid": Puzzle.generate_blank_grid(size, size) },
             date=dt.datetime.now().date(),
             draft=True,
             draft_clues = {

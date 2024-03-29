@@ -96,7 +96,6 @@ const debouncedPatch = debounce(async (endpoint, payload) => {
     } else {
       // happy path
       let json = await response.json()
-      console.log("save result", json)
     }
   } catch (error) {
     console.error("Unhandled error while attempting to save solution", error)
