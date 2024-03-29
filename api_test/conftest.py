@@ -6,7 +6,26 @@ from sqlalchemy import create_engine, text
 from contextlib import contextmanager
 from uuid import uuid1
 
-from flask import g, session
+from flask import g, session, redirect
+
+class PatchOauth:
+    default_info= {
+        "sub": "fakeid|123",
+        "email": "fake@faker.com",
+        "given_name": "fake",
+        "family_name": "user",
+        "picture": "https://fakeimage.usercontent.com"
+    }
+
+    def __init__(self, user_info=default_info):
+        self.auth0 = self
+        self.user_info = user_info
+    def authorize_redirect(self, **kwargs):
+        return redirect("")
+
+    def authorize_access_token(self):
+        return {"userinfo": self.user_info}
+
 
 @contextmanager
 def get_test_database(server: str, db_prefix: str='test_', migrations_glob: str=None):
@@ -65,9 +84,8 @@ def test_config():
 
         }
 
-
 @pytest.fixture
-def app(test_config):
+def app(test_config, monkeypatch):
     app = create_app(test_config)
     with app.app_context():
         with get_db_session() as db_session:
@@ -80,6 +98,7 @@ def app(test_config):
             ))
             db_session.commit()
 
+    app.config["OAUTH"] = PatchOauth()
     yield app
 
 @pytest.fixture

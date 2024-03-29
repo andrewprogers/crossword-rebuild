@@ -6,7 +6,7 @@ from .database import init_db, get_db_session
 # from sqlalchemy import select
 from api.blueprints import puzzle
 from api.blueprints import solution
-from api.blueprints.auth import init_auth
+from api.blueprints.auth import init_auth, auth_bp, user_bp
 import datetime as dt
 
 def create_app(test_config=None):
@@ -29,8 +29,7 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
     
     app.config["DB_SESSION"] = init_db(app)
-
-    init_auth(app)
+    app.config["OAUTH"] = init_auth(app)
 
     @app.route("/") # dummy route for use with url_for
     def home():
@@ -54,6 +53,8 @@ def create_app(test_config=None):
         if "db" in g:
             g.db.remove()
 
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(user_bp)
     app.register_blueprint(puzzle.bp)
     app.register_blueprint(solution.bp)
 
