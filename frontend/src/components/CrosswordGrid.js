@@ -7,7 +7,8 @@ const CrosswordGrid = ({
   selectedCellColumn,
   clueDirection,
   puzzleRevealed,
-  handleMouseClick
+  handleMouseClick,
+  inputRef
 }) => {
   const gridContainer = useRef(null)
   const [containerWidth, setContainerWidth] = useState(0)
@@ -25,6 +26,7 @@ const CrosswordGrid = ({
   })
 
   let selectedClue = crossword.getSelectedClue(clueDirection, selectedCellRow, selectedCellColumn)
+  let selectedCellTop = (containerWidth / crossword.userLetters.length)*selectedCellRow
   let cells = crossword.userLetters.map((row, rIndex) => {
     let cellRow = row.map((_, cIndex) => {
       return (
@@ -54,6 +56,21 @@ const CrosswordGrid = ({
         paddingBottom: "100%"
       }}
     >
+      <input 
+          autoFocus={true}
+          spellCheck={false}
+          type="text"
+          value=""
+          onChange={() => {}}
+          ref={inputRef}
+          maxLength={1}
+          style={{
+            transformOrigin: "top left",
+            transform: "scale(0)",
+            position: "absolute",
+            top: `${selectedCellTop}px`
+          }}
+        />
       <div
         id="grid-container"
         ref={gridContainer}

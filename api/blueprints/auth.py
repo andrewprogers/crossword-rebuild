@@ -30,7 +30,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix='/auth/')
 @auth_bp.route("/login", methods=["GET"])
 def login():
     if current_app.config.get("FLASK_ENV") == "DEVELOPMENT":
-        callback_url = "https://localhost:3000" + url_for("auth.callback", _external=False)
+        callback_url = "https://10.0.0.72:3000" + url_for("auth.callback", _external=False)
     else:
         callback_url = url_for("auth.callback", _external=True)
 
@@ -55,7 +55,7 @@ def callback():
 @auth_bp.route("/logout", methods=["GET"])
 def logout():
     if current_app.config["FLASK_ENV"] == "DEVELOPMENT":
-        return_url = "https://localhost:3000" + url_for("home", _external=False)
+        return_url = "https://10.0.0.72:3000" + url_for("home", _external=False)
     else:
         return_url = url_for("home", _external=True)
 
@@ -71,7 +71,7 @@ def logout():
     logout_redirect = f"https://{current_app.config['AUTH0_DOMAIN']}/v2/logout?{logout_params}"
     return redirect(logout_redirect)
 
-user_bp = Blueprint("user", __name__, url_prefix='/api/user')
+user_bp = Blueprint("user", __name__, url_prefix='/user')
 
 @user_bp.route("/", methods=["GET"])
 def current_user():

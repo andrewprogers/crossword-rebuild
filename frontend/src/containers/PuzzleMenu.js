@@ -3,6 +3,17 @@ import MenuButton from '../components/MenuButton'
 import PuzzleTitle from '../components/PuzzleTitle'
 import InfoContainer from '../components/InfoContainer'
 
+const getMatchingWords = async (pattern) => {
+  const res = await fetch(`/api/words/search?pattern=${pattern}`)
+  let words = []
+  if (res.ok) {
+    words = (await res.json()).words
+  }
+  return {
+    words,
+    status: (words.length > 0) ? "Matches" : "Couldn't match your pattern!"
+  }
+}
 
 const PuzzleMenu = ({
   crossword,
@@ -23,25 +34,18 @@ const PuzzleMenu = ({
   const [words, setWords] = useState([])
   const [wordData, setWordData] = useState(null)
 
-  // matchPattern() {
-  //   let row = this.props.selectedCellRow
-  //   let col = this.props.selectedCellColumn
-  //   let userPattern = this.props.crossword.getUserPattern(this.props.clueDirection, row, col)
-  //   let matchPattern = userPattern.replace(/ /g, "?");
-  //   let matchedWords = this.getMatchingWords(matchPattern)
-  //   this.setState({status: `Searching: ${matchPattern}`, words: [], wordData: null})
-  // }
+  const matchPattern = async () => {
+    let userPattern = crossword.getUserPattern(clueDirection, selectedCellRow, selectedCellColumn)
+    let matchPattern = userPattern.replace(/ /g, "?");
+    setStatus(`Searching: ${matchPattern}`)
+    setWords([])
+    setWordData(null)
+    const {words, status} = await getMatchingWords(matchPattern)
+    setStatus(status)
+    setWords(words)
+  }
 
-  // getMatchingWords(pattern) {
-  //   fetch(`${window.location.origin}/api/v1/words?pattern=${pattern}`)
-  //   .then(response => {return response.ok ? response.json() : {words: []}})
-  //   .then(json => json.words)
-  //   .then(words => {
-  //     let newState = {words: words}
-  //     newState.status = (words.length > 0) ? "Matches" : "Couldn't match your pattern!"
-  //     this.setState(newState)
-  //   })
-  // }
+
 
   // getWordAnalysis(word) {
   //   fetch(`${window.location.origin}/api/v1/words/analyze?word=${word}`)
@@ -62,7 +66,7 @@ const PuzzleMenu = ({
   if (editMode) {
     editOnlyButtons = [
       <MenuButton key="PUBLISH" name="PUBLISH" onClick={publishPuzzle} />,
-      <MenuButton key="MATCH" name="MATCH" onClick={() => console.error("TODO: Implement pattern match")} />
+      <MenuButton key="MATCH" name="MATCH" onClick={() => matchPattern()} />
     ]
     columnClassNames = "small-12 medium-6 columns";
     infoSection = <div className="small-12 medium-6 columns">

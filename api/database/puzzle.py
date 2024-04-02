@@ -51,6 +51,16 @@ class Puzzle(Base):
                 clues["down"].append(answer.clue)
         return clues
     
+    def validate_draft(self, clue_numbers, clue_answers):
+        return not all((
+            len(self.grid["grid"]) == (self.num_rows * self.num_cols),
+            len(self.title.strip()) > 0,
+            len(self.draft_clues["across"]) >= len(clue_numbers["across"]),
+            len(self.draft_clues["down"]) >= len(clue_numbers["down"]),
+            len(clue_answers["across"]) == len(clue_numbers["across"]),
+            len(clue_answers["down"]) == len(clue_numbers["down"])
+        ))
+    
     def to_dict(self):
         return {
             "id": self.id,

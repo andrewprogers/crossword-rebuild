@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState, useRef} from 'react';
 import {unselectableStyle} from './styles'
 
+const LONG_PRESS_MS = 500;
 const cellStyle = {
   borderRight: "1px solid #555",
   borderBottom: "1px solid #555",
@@ -76,6 +77,22 @@ const Cell = ({
     handleMouseClick(currentCell, toggleBlack)
   };
 
+  let longPressTimeout = useRef(null)
+  let handleLongPress = (event, isStart) => {
+    if (longPressTimeout.current !== null) { 
+      clearTimeout(longPressTimeout.current)
+      longPressTimeout.current = null
+    }
+    if (isStart) {
+      longPressTimeout.current = setTimeout(() => {
+        handleMouseClick({
+          row: row,
+          column: column
+        }, true)
+      }, LONG_PRESS_MS)
+    }
+  }
+
   if (((row >= selectedClue.rowStart) && (row <= selectedClue.rowEnd))
       && ((column >= selectedClue.columnStart) && (column <= selectedClue.columnEnd))) {
     styles.push(selectedClueStyle)
@@ -91,6 +108,10 @@ const Cell = ({
     <div 
       className='cell'
       onClick={clickHandler}
+      onTouchStart={(e) => handleLongPress(e, true)}
+      onTouchMove={(e) => handleLongPress(e, false)}
+      onTouchCancel={(e) => handleLongPress(e, false)}
+      onTouchEnd={(e) => handleLongPress(e, false)}
       style={Object.assign({}, ...styles)}
     >
       <div 

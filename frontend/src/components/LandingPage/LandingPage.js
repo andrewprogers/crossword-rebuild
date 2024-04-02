@@ -1,6 +1,6 @@
-import grid from './grid.png'
-import github_mark from './github_mark.png'
-import linked_in_mark from './linked_in_mark.png'
+import grid from '../../images/grid.png'
+import github_mark from '../../images/github_mark.png'
+import linked_in_mark from '../../images/linked_in_mark.png'
 import {Link} from 'react-router-dom'
 
 import './LandingPage.css'

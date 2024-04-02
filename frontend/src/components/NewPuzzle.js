@@ -4,14 +4,16 @@ import './NewPuzzle.css'
 
 const NewPuzzle = () => {
     const data = useActionData()
-    const title = data?.title || ""
+    console.log(data)
+    const title = data?.title || "My First Crossword"
     const titleError = data?.titleError
     const size = data?.size || 10
     const sizeError = data?.sizeError
+    const otherError = (data && data.valid)
 
     return (
         <div className="row" id="new-puzzle">
-            <h1>Create a new puzzle</h1>
+            <h1>Create a New Puzzle</h1>
             <Form method="post">
                 <label htmlFor="title">Title</label>
                 <input type="text" name="title" defaultValue={title} required />
@@ -20,6 +22,8 @@ const NewPuzzle = () => {
                 <label htmlFor="size">Size (5-25 rows)</label>
                 <input type="number" name="size" min={5} max={25} defaultValue={size} required />
                 <span className="form-error is-visible">{sizeError}</span>
+                <span className="form-error is-visible">{otherError && `There was an error submitting your request`}</span>
+
 
                 <button type="submit" className="submit-button">Create Crossword</button>
             </Form>
@@ -31,6 +35,7 @@ const validate_new_puzzle = (title, size) => {
     let valid = true
     let titleError, sizeError = (null, null)
     title = title.trim()
+    size = parseInt(size)
 
     if (title.length < 1 || title.length > 50) {
         titleError = "Puzzle title must be between 1 and 50 characters"
@@ -46,7 +51,7 @@ const validate_new_puzzle = (title, size) => {
 const createFail = (validation) => ({
     created: false,
     puzzleId: null,
-    formData: validation
+    formData: validation,
 })
 
 const createPuzzle = async (title, size) => {
@@ -63,6 +68,9 @@ const createPuzzle = async (title, size) => {
 
     const response = await fetch('/api/puzzle/create', payload)
     let json = await response.json()
+    if (!response.ok) {
+        return createFail(validation)
+    }
     return {
         created: true,
         puzzleId: json.puzzle_id

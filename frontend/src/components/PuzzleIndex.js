@@ -2,13 +2,21 @@ import React from "react";
 import { useLoaderData } from "react-router-dom";
 import './PuzzleIndex.css'
 import {Link} from 'react-router-dom'
+import squares from '../images/squares.png'
 
 const PuzzleTile = ({ puzzle }) => {
+    let author;
+    if (puzzle.user_name){
+        author = <span className="author-name"><br />{puzzle.user_name}</span>
+    }
     return (
         <Link to={puzzle.url}>
             <div className="puzzle-tile">
-                {puzzle.title}<br />
-                <span className='author-name'>{puzzle.user_name}</span>
+                <img src={squares} alt="crossword grid" />
+                <div className="title-container">
+                    <span><b>{puzzle.title}</b></span>
+                    {author}
+                </div>
             </div>
         </Link>
     )
@@ -28,7 +36,7 @@ const PuzzleColumn = ({
     }
 
     return (
-        <div className="small-12 medium-12 large-4 columns">
+        <div className="small-12 medium-12 large-12 columns">
             <h3>{column_title}</h3>
             {content}
         </div >
@@ -47,11 +55,11 @@ const PuzzleIndex = () => {
                 placeholder="No Unfinished Puzzles!"
                 puzzles={in_progress} />
             <PuzzleColumn
-                column_title="Your Puzzles"
+                column_title="Published Puzzles"
                 placeholder="You haven't published any puzzles yet!"
                 puzzles={created} />
             <PuzzleColumn
-                column_title="Your Drafts"
+                column_title="Drafts"
                 placeholder="You don't have any drafts right now!"
                 puzzles={draft} />
         </>)

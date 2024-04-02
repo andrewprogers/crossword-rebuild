@@ -1,8 +1,9 @@
 import React from 'react';
+import './InfoContainer.css'
 
 const InfoContainer = props => {
   let defaultText = <span>
-    Place black cells using shift-click <br></br>
+    Place black cells using shift-click (Long-press on mobile) <br></br>
     Enter the grid letters using the keyboard<br></br>
     Click on the clues to edit them <br></br>
     Use 'Match' to search for words that fit the highlighted pattern<br></br>
