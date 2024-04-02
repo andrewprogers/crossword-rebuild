@@ -141,7 +141,7 @@ const Cell = ({
           textAlign: "center",
           cursor: "default"
         }}
-        onKeyDownCapture={(e) => {console.error("TODO handle key down in cell")}}>{letter}</div>
+      >{letter}</div>
     </div>
   )
 }

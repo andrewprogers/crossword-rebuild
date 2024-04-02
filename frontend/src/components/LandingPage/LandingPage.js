@@ -19,14 +19,14 @@ const LandingPage = () => {
                 <div className="small-12 small-centered columns">
                     <h3>Welcome to Cross Reaction!</h3>
                     <p>
-                    Cross Reaction is a modern browser-based interface for solving and creating crossword puzzles. The puzzles found here are community contributed. Tools are available to help first-time constructors and pros alike build puzzles to share.
+                    Cross Reaction is a browser-based interface for solving and creating crossword puzzles. Anyone can author their own puzzle to contribute. Tools are available to help first-time constructors and pros alike build puzzles to share.
                     You'll get the most out of this site by signing in so that we can save your solutions and drafts.
                     </p>
                     <br />
                     <p>
-                    This app was built by Andrew Rogers while at Launch Academy.
+                    This app was built by Andrew Rogers while at Launch Academy and recently completely rebuilt
                     </p>
-                    <a href="https://github.com/andrewprogers/crossword-react-on-rails">
+                    <a href="https://github.com/andrewprogers/crossword-rebuild">
                     <img src={github_mark} alt="Github Icon"/>
                     </a>
                     <a href="https://www.linkedin.com/in/andrew-paul-rogers/">

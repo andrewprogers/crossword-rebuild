@@ -4,7 +4,6 @@ import './NewPuzzle.css'
 
 const NewPuzzle = () => {
     const data = useActionData()
-    console.log(data)
     const title = data?.title || "My First Crossword"
     const titleError = data?.titleError
     const size = data?.size || 10

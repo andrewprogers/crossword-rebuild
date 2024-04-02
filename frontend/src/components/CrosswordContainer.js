@@ -18,13 +18,11 @@ if (userAgent.os.name == "Android" && userAgent.browser.name == "Chrome") {
 
 
 const debouncedPatch = debounce(async (endpoint, payload) => {
-  console.log(endpoint)
   try {
     const response = await fetch(endpoint, payload)
     if (response.status === 401) {
       let json = await response.json()
       if ('redirect_url' in json) {
-        console.log("Unauthenticated, redirecting")
         window.location = json.redirect_url
       } else {
         throw new Error("401 API response missing redirect_url")
@@ -153,7 +151,6 @@ const CrosswordContainer = () => {
         // keydown do not have the actual key and have keyCode == 229 which we can ignore
         if (event.type == 'keydown' && event.keyCode == 229) { return }
 
-        console.log(event)
         let key = null;
         if (event.type == 'input') {
           if (event.inputType == 'deleteContentBackward') key = 'Delete'
@@ -170,7 +167,6 @@ const CrosswordContainer = () => {
 
           // a bit hacky but prevents autocomplete suggestions from populating 
           // (clicking on those messes with the need for input events to come 1 key at a time)
-          console.log("blur")
           inputRef.current.blur()
           inputRef.current.focus()
         }
