@@ -6,4 +6,4 @@ instance/config_staging.py
 db/neon_creds.txt
 **/__pycache__
 database/seed_data/
-/build/
+/build
