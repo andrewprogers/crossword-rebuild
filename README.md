@@ -10,7 +10,7 @@ This app was originally build as "breakable toy" project at Launch Academy in 20
 - Publish puzzles and share them with your friends
 - Signed-in users have their solutions and draft puzzles saved automatically
 
-![Cross Reaction Screenshot](public/crScreenshot.png)
+![Cross Reaction Screenshot](crScreenshot.png)
 
 ## Deployment details
 This project is deployed on Google cloud as an app engine as described by the app.yaml file
